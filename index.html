@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>하루 5분 시편 디지털 필사 | Psalms Pilsa</title>
+  <title>하루 5분 시편 필사 | 내 마음의 에덴동산</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Pretendard:wght@300;400;600&display=swap" rel="stylesheet">
@@ -67,8 +67,8 @@
       font-family: 'Pretendard', sans-serif;
       font-weight: 600;
       color: var(--accent);
-      background: rgba(139, 94, 52, 0.1);
-      padding: 2px 6px;
+      background: rgba(139, 94, 52, 0.12);
+      padding: 2px 7px;
       border-radius: 8px;
     }
     .header-controls {
@@ -168,7 +168,6 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
-    /* Mobile-friendly Input Area */
     .input-box-wrapper {
       margin-top: 10px;
       position: relative;
@@ -234,13 +233,18 @@
     }
     .bgm-banner {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 8px;
       background: var(--card-bg);
       border: 1px solid var(--border);
-      padding: 10px 16px;
+      padding: 12px 16px;
       border-radius: 12px;
       font-size: 13px;
+    }
+    .bgm-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .bgm-title {
       display: flex;
@@ -255,20 +259,20 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      padding: 6px 12px;
-      border-radius: 14px;
+      padding: 8px 16px;
+      border-radius: 16px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
+      transition: background 0.2s;
     }
     .btn-bgm.playing {
       background: #554d45;
     }
-    .youtube-link {
-      color: var(--accent);
-      text-decoration: underline;
-      margin-left: 4px;
-      font-size: 12px;
+    .bgm-tip {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
     }
     .affiliate-link {
       font-size: 12px;
@@ -344,9 +348,11 @@
 </head>
 <body>
 
+  <audio id="bgmAudio" src="bgm.wav" loop playsinline preload="auto"></audio>
+
   <header>
     <div class="brand">
-      하루 5분 시편 필사 <span>PROTOTYPE</span>
+      하루 5분 시편 필사 <span>내 마음의 에덴동산</span>
     </div>
     <div class="header-controls">
       <button class="btn-icon" id="soundBtn">🔊 타자음: 켬</button>
@@ -382,12 +388,14 @@
 
   <footer>
     <div class="bgm-banner">
-      <div class="bgm-title">
-        <span>🎧</span>
-        <span>배경음악: <strong>Lofi Ambient</strong></span>
-        <a href="https://www.youtube.com/@lofibrew4u" target="_blank" class="youtube-link">[Lofi Brew 채널]</a>
+      <div class="bgm-row">
+        <div class="bgm-title">
+          <span>🎧</span>
+          <span>배경음악: <strong>내 마음의 에덴동산 (묵상 피아노)</strong></span>
+        </div>
+        <button class="btn-bgm" id="bgmToggleBtn">▶ 음악 재생</button>
       </div>
-      <button class="btn-bgm" id="bgmToggleBtn">▶ BGM 재생</button>
+      <div class="bgm-tip">※ 소리가 안 들리면 스마트폰의 미디어 볼륨을 높여주세요</div>
     </div>
     <a href="#" class="affiliate-link">
       ✍️ 오늘 필사한 구절을 손글씨로도 적어보세요 · 추천 손글씨 교본 & 만년필 둘러보기
@@ -418,9 +426,8 @@
 
     let currentIndex = 0;
     let soundEnabled = true;
-    let bgmPlaying = false;
 
-    // Web Audio Context (unlocked on first touch/click)
+    // Web Audio Context for crisp mechanical typewriter sound
     let audioCtx = null;
     function getAudioCtx() {
       if (!audioCtx) {
@@ -432,7 +439,7 @@
       return audioCtx;
     }
 
-    // Typewriter click sound
+    // Audible, crisp typewriter sound
     function playTypewriterClick() {
       if (!soundEnabled) return;
       try {
@@ -440,82 +447,36 @@
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(550 + Math.random() * 150, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.04);
-        gain.gain.setValueAtTime(0.12, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.005, ctx.currentTime + 0.04);
+        osc.frequency.setValueAtTime(850 + Math.random() * 250, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(140, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.05);
+        osc.stop(ctx.currentTime + 0.06);
       } catch (e) {}
     }
 
-    // Ambient Lofi Chords Synthesizer (Zero network, 100% offline, soothing sound)
-    let bgmInterval = null;
-    const chords = [
-      [261.63, 329.63, 392.00, 493.88], // Cmaj7 (C4, E4, G4, B4)
-      [220.00, 261.63, 329.63, 392.00], // Am7 (A3, C4, E4, G4)
-      [174.61, 220.00, 261.63, 329.63], // Fmaj7 (F3, A3, C4, E4)
-      [196.00, 246.94, 293.66, 349.23]  // G7 (G3, B3, D4, F4)
-    ];
-    let chordIndex = 0;
+    // Native HTML5 Audio for reliable BGM
+    const bgmAudio = document.getElementById('bgmAudio');
+    const bgmBtn = document.getElementById('bgmToggleBtn');
 
-    function playLofiChord() {
-      if (!bgmPlaying) return;
-      try {
-        const ctx = getAudioCtx();
-        const chord = chords[chordIndex % chords.length];
-        chordIndex++;
-
-        // Filter for warm lo-fi tone
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(480, ctx.currentTime);
-
-        const masterGain = ctx.createGain();
-        masterGain.gain.setValueAtTime(0.08, ctx.currentTime);
-
-        chord.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime);
-
-          // Arpeggiated soft attack
-          const startT = ctx.currentTime + (idx * 0.06);
-          gain.gain.setValueAtTime(0.0001, startT);
-          gain.gain.exponentialRampToValueAtTime(0.05, startT + 0.4);
-          gain.gain.exponentialRampToValueAtTime(0.0001, startT + 3.2);
-
-          osc.connect(gain);
-          gain.connect(filter);
-          osc.start(startT);
-          osc.stop(startT + 3.4);
+    bgmBtn.addEventListener('click', () => {
+      getAudioCtx(); // unlock audio context
+      if (bgmAudio.paused) {
+        bgmAudio.play().then(() => {
+          bgmBtn.innerText = '⏸ 음악 일시정지';
+          bgmBtn.classList.add('playing');
+        }).catch(err => {
+          console.log('Audio play error:', err);
         });
-
-        filter.connect(masterGain);
-        masterGain.connect(ctx.destination);
-      } catch (e) {}
-    }
-
-    function toggleBGM() {
-      const btn = document.getElementById('bgmToggleBtn');
-      if (!bgmPlaying) {
-        bgmPlaying = true;
-        btn.innerText = '⏸ BGM 끄기';
-        btn.classList.add('playing');
-        playLofiChord();
-        bgmInterval = setInterval(playLofiChord, 3500);
       } else {
-        bgmPlaying = false;
-        btn.innerText = '▶ BGM 재생';
-        btn.classList.remove('playing');
-        if (bgmInterval) clearInterval(bgmInterval);
+        bgmAudio.pause();
+        bgmBtn.innerText = '▶ 음악 재생';
+        bgmBtn.classList.remove('playing');
       }
-    }
-
-    document.getElementById('bgmToggleBtn').addEventListener('click', toggleBGM);
+    });
 
     // Elements
     const displayEl = document.getElementById('verseDisplay');
@@ -550,8 +511,9 @@
       progressEl.style.width = pct + '%';
     }
 
-    // Input Event handling (Full Korean IME support on all mobile keyboards)
+    // Input Event handling (Full Korean IME support)
     inputEl.addEventListener('input', (e) => {
+      getAudioCtx();
       playTypewriterClick();
       render();
 
@@ -618,11 +580,11 @@
       ctx.fillText('필사', 400, 545);
       ctx.fillText('완료', 400, 575);
 
-      // Date & Signature
+      // Date & Custom User Signature: '내 마음의 에덴동산'
       const today = new Date().toISOString().split('T')[0].replace(/-/g, '.');
       ctx.fillStyle = '#9e9488';
-      ctx.font = '18px sans-serif';
-      ctx.fillText(`${today} · Lofi Brew`, 400, 660);
+      ctx.font = '19px sans-serif';
+      ctx.fillText(`${today} · 내 마음의 에덴동산`, 400, 660);
     }
 
     document.getElementById('downloadBtn').addEventListener('click', () => {
@@ -664,8 +626,8 @@
       document.getElementById('soundBtn').innerText = soundEnabled ? '🔊 타자음: 켬' : '🔇 소리: 끔';
     });
 
-    // Touch card to focus input
     document.getElementById('cardArea').addEventListener('click', () => {
+      getAudioCtx();
       inputEl.focus();
     });
 
