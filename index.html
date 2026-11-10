@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하루 5분 시편 디지털 필사 | Psalms Pilsa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Pretendard:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #fcfaf5;
+      --card-bg: #ffffff;
+      --text-main: #22201d;
+      --text-muted: #8c827a;
+      --text-faint: #d4cdc5;
+      --accent: #8b5e34;
+      --border: #ede7df;
+      --seal: #b83b26;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+    body.dark {
+      --bg-color: #171614;
+      --card-bg: #22201c;
+      --text-main: #f5f2eb;
+      --text-muted: #9e9488;
+      --text-faint: #47423c;
+      --accent: #d4a373;
+      --border: #332f2a;
+      --seal: #e0533c;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Gowun Batang', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 16px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    header {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand span {
+      font-size: 12px;
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 400;
+      color: var(--text-muted);
+      background: var(--border);
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .header-controls {
+      display: flex;
+      gap: 12px;
+    }
+    .btn-icon {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-icon:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    main {
+      width: 100%;
+      max-width: 680px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 0;
+    }
+    .pilsa-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .verse-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .progress-bar-container {
+      width: 120px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.2s;
+    }
+    .verse-display {
+      font-size: 26px;
+      line-height: 2.1;
+      letter-spacing: -0.3px;
+      min-height: 120px;
+      position: relative;
+      user-select: none;
+      word-break: keep-all;
+    }
+    .char-typed {
+      color: var(--text-main);
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+    }
+    .char-target {
+      color: var(--text-faint);
+    }
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 28px;
+      background-color: var(--accent);
+      vertical-align: middle;
+      animation: blink 1s infinite;
+      margin-left: 2px;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .input-hidden {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 36px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-family: 'Pretendard', sans-serif;
+    }
+    .stat-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-nav {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-nav:hover {
+      background: var(--border);
+    }
+    footer {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-family: 'Pretendard', sans-serif;
+    }
+    .bgm-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+    .bgm-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+    .bgm-title strong {
+      color: var(--accent);
+    }
+    .affiliate-link {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      text-decoration: none;
+      padding: 6px;
+      border-radius: 6px;
+      transition: color 0.2s;
+    }
+    .affiliate-link:hover {
+      color: var(--accent);
+    }
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+    .canvas-preview {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin: 16px 0;
+    }
+    .btn-download {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      width: 100%;
+      font-family: 'Pretendard', sans-serif;
+      margin-bottom: 8px;
+    }
+    .btn-close {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+      font-family: 'Pretendard', sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      하루 5분 시편 필사 <span>BETA</span>
+    </div>
+    <div class="header-controls">
+      <button class="btn-icon" id="soundBtn">🔊 타자기 소리: 켜짐</button>
+      <button class="btn-icon" id="themeBtn">🌓 화면 모드</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="pilsa-card" id="cardArea">
+      <div class="verse-meta">
+        <span id="verseTitle">시편 23편 1절</span>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+
+      <div class="verse-display" id="verseDisplay"></div>
+
+      <input type="text" class="input-hidden" id="hiddenInput" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+      <div class="action-row">
+        <div class="stat-text" id="statText">화면을 탭하고 한 글자씩 타자를 쳐보세요</div>
+        <div class="nav-buttons">
+          <button class="btn-nav" id="prevBtn">이전</button>
+          <button class="btn-nav" id="nextBtn">다음 구절</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="bgm-banner">
+      <div class="bgm-title">
+        <span>🎧</span>
+        <span>배경음악: <strong>Lofi Brew - Coffee and Clouds</strong></span>
+      </div>
+      <button class="btn-icon" style="padding: 4px 10px;">재생중</button>
+    </div>
+    <a href="#" class="affiliate-link">
+      ✍️ 오늘 필사한 구절을 손글씨로도 적어보세요 · 추천 손글씨 교본 & 만년필 둘러보기
+    </a>
+  </footer>
+
+  <!-- Completion Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+      <div class="modal-title">오늘의 필사 완료 ✨</div>
+      <p style="font-family:'Pretendard',sans-serif; font-size:13px; color:var(--text-muted);">
+        마음을 담아 한 타 한 타 정성껏 완성하셨습니다.
+      </p>
+      <canvas id="cardCanvas" width="800" height="800" class="canvas-preview"></canvas>
+      <button class="btn-download" id="downloadBtn">인스타그램 / 카톡 카드 다운로드</button>
+      <button class="btn-close" id="closeModalBtn">다음 구절로 넘어가기</button>
+    </div>
+  </div>
+
+  <script>
+    const verses = [
+      { ref: "시편 23편 1절", text: "여호와는 나의 목자시니 내게 부족함이 없으리로다" },
+      { ref: "시편 23편 2절", text: "그가 나를 푸른 풀밭에 누이시며 쉴 만한 물 가로 인도하시는도다" },
+      { ref: "시편 121편 1절", text: "내가 산을 향하여 눈을 들리라 나의 도움이 어디서 올까" },
+      { ref: "시편 121편 2절", text: "나의 도움은 천지를 지으신 여호와에게서로다" }
+    ];
+
+    let currentIndex = 0;
+    let typedText = "";
+    let soundEnabled = true;
+
+    // Web Audio API for Typewriter sound
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTypewriterClick() {
+      if (!soundEnabled) return;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(600 + Math.random() * 200, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.04);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.05);
+    }
+
+    const displayEl = document.getElementById('verseDisplay');
+    const titleEl = document.getElementById('verseTitle');
+    const progressEl = document.getElementById('progressBar');
+    const inputEl = document.getElementById('hiddenInput');
+    const cardArea = document.getElementById('cardArea');
+    const modalEl = document.getElementById('modalOverlay');
+
+    function render() {
+      const current = verses[currentIndex];
+      titleEl.innerText = current.ref;
+      const target = current.text;
+
+      let html = '';
+      for (let i = 0; i < target.length; i++) {
+        if (i < typedText.length) {
+          html += `<span class="char-typed">${typedText[i]}</span>`;
+        } else if (i === typedText.length) {
+          html += `<span class="cursor"></span><span class="char-target">${target[i]}</span>`;
+        } else {
+          html += `<span class="char-target">${target[i]}</span>`;
+        }
+      }
+      displayEl.innerHTML = html;
+
+      const pct = Math.min(100, Math.round((typedText.length / target.length) * 100));
+      progressEl.style.width = pct + '%';
+    }
+
+    cardArea.addEventListener('click', () => {
+      inputEl.focus();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (modalEl.classList.contains('active')) return;
+      const target = verses[currentIndex].text;
+
+      if (e.key === 'Backspace') {
+        if (typedText.length > 0) {
+          typedText = typedText.slice(0, -1);
+          render();
+        }
+        return;
+      }
+
+      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        if (typedText.length < target.length) {
+          typedText += e.key;
+          playTypewriterClick();
+          render();
+
+          if (typedText === target) {
+            setTimeout(completeVerse, 300);
+          }
+        }
+      }
+    });
+
+    function completeVerse() {
+      generateCardImage();
+      modalEl.classList.add('active');
+    }
+
+    function generateCardImage() {
+      const canvas = document.getElementById('cardCanvas');
+      const ctx = canvas.getContext('2d');
+      const verse = verses[currentIndex];
+
+      // Draw paper background
+      ctx.fillStyle = '#fcfaf5';
+      ctx.fillRect(0, 0, 800, 800);
+
+      // Subtle border
+      ctx.strokeStyle = '#ede7df';
+      ctx.lineWidth = 16;
+      ctx.strokeRect(30, 30, 740, 740);
+
+      // Header
+      ctx.fillStyle = '#8b5e34';
+      ctx.font = '24px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('하루 5분 시편 필사', 400, 160);
+
+      // Verse Reference
+      ctx.fillStyle = '#8c827a';
+      ctx.font = '20px sans-serif';
+      ctx.fillText(verse.ref, 400, 210);
+
+      // Divider line
+      ctx.strokeStyle = '#d4cdc5';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(320, 240);
+      ctx.lineTo(480, 240);
+      ctx.stroke();
+
+      // Main Verse Text (wrapped)
+      ctx.fillStyle = '#22201d';
+      ctx.font = 'bold 36px serif';
+      const words = verse.text.split(' ');
+      let line1 = words.slice(0, 3).join(' ');
+      let line2 = words.slice(3).join(' ');
+      ctx.fillText(line1, 400, 380);
+      if (line2) ctx.fillText(line2, 400, 440);
+
+      // Seal Stamp
+      ctx.strokeStyle = '#b83b26';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(360, 530, 80, 80);
+      ctx.fillStyle = '#b83b26';
+      ctx.font = 'bold 20px serif';
+      ctx.fillText('필사', 400, 565);
+      ctx.fillText('완료', 400, 595);
+
+      // Date & Signature
+      const today = new Date().toISOString().split('T')[0].replace(/-/g, '.');
+      ctx.fillStyle = '#9e9488';
+      ctx.font = '18px sans-serif';
+      ctx.fillText(`${today} · Lofi Brew`, 400, 680);
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('cardCanvas');
+      const link = document.createElement('a');
+      link.download = `시편필사_${verses[currentIndex].ref}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+      modalEl.classList.remove('active');
+      currentIndex = (currentIndex + 1) % verses.length;
+      typedText = "";
+      render();
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % verses.length;
+      typedText = "";
+      render();
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + verses.length) % verses.length;
+      typedText = "";
+      render();
+    });
+
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+    });
+
+    document.getElementById('soundBtn').addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊 타자기 소리: 켜짐' : '🔇 소리: 꺼짐';
+    });
+
+    render();
+  </script>
+</body>
+</html>
