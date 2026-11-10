@@ -2,14 +2,14 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>하루 5분 시편 디지털 필사 | Psalms Pilsa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Pretendard:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-color: #fcfaf5;
+      --bg-color: #fbf9f4;
       --card-bg: #ffffff;
       --text-main: #22201d;
       --text-muted: #8c827a;
@@ -17,7 +17,8 @@
       --accent: #8b5e34;
       --border: #ede7df;
       --seal: #b83b26;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      --wrong: #d9534f;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
     }
     body.dark {
       --bg-color: #171614;
@@ -28,7 +29,8 @@
       --accent: #d4a373;
       --border: #332f2a;
       --seal: #e0533c;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      --wrong: #ff6b6b;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -40,48 +42,48 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 24px 16px;
+      padding: 16px 12px;
       transition: background-color 0.3s, color 0.3s;
     }
     header {
       width: 100%;
-      max-width: 680px;
+      max-width: 640px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 20px;
+      padding-bottom: 14px;
       border-bottom: 1px solid var(--border);
     }
     .brand {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
       letter-spacing: -0.5px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .brand span {
-      font-size: 12px;
+      font-size: 11px;
       font-family: 'Pretendard', sans-serif;
-      font-weight: 400;
-      color: var(--text-muted);
-      background: var(--border);
-      padding: 2px 8px;
-      border-radius: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(139, 94, 52, 0.1);
+      padding: 2px 6px;
+      border-radius: 8px;
     }
     .header-controls {
       display: flex;
-      gap: 12px;
+      gap: 8px;
     }
     .btn-icon {
-      background: none;
+      background: var(--card-bg);
       border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 6px 12px;
-      border-radius: 20px;
+      padding: 6px 10px;
+      border-radius: 18px;
       cursor: pointer;
       font-family: 'Pretendard', sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       display: flex;
       align-items: center;
       gap: 4px;
@@ -93,18 +95,18 @@
     }
     main {
       width: 100%;
-      max-width: 680px;
+      max-width: 640px;
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 40px 0;
+      padding: 20px 0;
     }
     .pilsa-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 48px 40px;
+      padding: 28px 22px;
       box-shadow: var(--shadow);
       position: relative;
     }
@@ -112,14 +114,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 28px;
+      margin-bottom: 20px;
       font-family: 'Pretendard', sans-serif;
       font-size: 14px;
       color: var(--accent);
       font-weight: 600;
     }
     .progress-bar-container {
-      width: 120px;
+      width: 100px;
       height: 4px;
       background: var(--border);
       border-radius: 2px;
@@ -132,18 +134,23 @@
       transition: width 0.2s;
     }
     .verse-display {
-      font-size: 26px;
-      line-height: 2.1;
+      font-size: 22px;
+      line-height: 2.0;
       letter-spacing: -0.3px;
-      min-height: 120px;
-      position: relative;
+      min-height: 90px;
       user-select: none;
       word-break: keep-all;
+      margin-bottom: 24px;
     }
     .char-typed {
       color: var(--text-main);
       font-weight: 700;
       border-bottom: 2px solid var(--accent);
+    }
+    .char-wrong {
+      color: var(--wrong);
+      background: rgba(217, 83, 79, 0.1);
+      border-bottom: 2px solid var(--wrong);
     }
     .char-target {
       color: var(--text-faint);
@@ -151,57 +158,77 @@
     .cursor {
       display: inline-block;
       width: 2px;
-      height: 28px;
+      height: 22px;
       background-color: var(--accent);
       vertical-align: middle;
       animation: blink 1s infinite;
-      margin-left: 2px;
+      margin: 0 1px;
     }
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
-    .input-hidden {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
+    /* Mobile-friendly Input Area */
+    .input-box-wrapper {
+      margin-top: 10px;
+      position: relative;
+    }
+    .pilsa-input {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: 'Gowun Batang', serif;
+      font-size: 18px;
+      border: 1.5px solid var(--accent);
+      border-radius: 12px;
+      background: var(--bg-color);
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .pilsa-input:focus {
+      box-shadow: 0 0 0 3px rgba(139, 94, 52, 0.15);
+    }
+    .pilsa-input::placeholder {
+      color: var(--text-muted);
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
     }
     .action-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 36px;
-      padding-top: 20px;
+      margin-top: 20px;
+      padding-top: 14px;
       border-top: 1px solid var(--border);
       font-family: 'Pretendard', sans-serif;
     }
     .stat-text {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
     }
     .nav-buttons {
       display: flex;
-      gap: 8px;
+      gap: 6px;
     }
     .btn-nav {
-      background: none;
+      background: var(--bg-color);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
     }
     .btn-nav:hover {
       background: var(--border);
     }
     footer {
       width: 100%;
-      max-width: 680px;
+      max-width: 640px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      padding-top: 20px;
+      gap: 12px;
+      padding-top: 16px;
       border-top: 1px solid var(--border);
       font-family: 'Pretendard', sans-serif;
     }
@@ -211,27 +238,44 @@
       align-items: center;
       background: var(--card-bg);
       border: 1px solid var(--border);
-      padding: 12px 20px;
+      padding: 10px 16px;
       border-radius: 12px;
       font-size: 13px;
     }
     .bgm-title {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       color: var(--text-main);
     }
     .bgm-title strong {
       color: var(--accent);
+    }
+    .btn-bgm {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .btn-bgm.playing {
+      background: #554d45;
+    }
+    .youtube-link {
+      color: var(--accent);
+      text-decoration: underline;
+      margin-left: 4px;
+      font-size: 12px;
     }
     .affiliate-link {
       font-size: 12px;
       color: var(--text-muted);
       text-align: center;
       text-decoration: none;
-      padding: 6px;
-      border-radius: 6px;
-      transition: color 0.2s;
+      padding: 4px;
     }
     .affiliate-link:hover {
       color: var(--accent);
@@ -241,12 +285,12 @@
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.65);
       backdrop-filter: blur(4px);
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      padding: 20px;
+      padding: 16px;
     }
     .modal-overlay.active {
       display: flex;
@@ -254,32 +298,32 @@
     .modal-card {
       background: var(--card-bg);
       border-radius: 20px;
-      padding: 32px;
-      max-width: 420px;
+      padding: 24px;
+      max-width: 380px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
     }
     .modal-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       color: var(--accent);
     }
     .canvas-preview {
       width: 100%;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin: 16px 0;
+      margin: 14px 0;
     }
     .btn-download {
       background: var(--accent);
       color: #fff;
       border: none;
-      padding: 12px 24px;
+      padding: 12px 20px;
       border-radius: 10px;
       font-weight: 600;
-      font-size: 15px;
+      font-size: 14px;
       cursor: pointer;
       width: 100%;
       font-family: 'Pretendard', sans-serif;
@@ -289,9 +333,9 @@
       background: none;
       border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 10px 20px;
+      padding: 9px 16px;
       border-radius: 10px;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       width: 100%;
       font-family: 'Pretendard', sans-serif;
@@ -302,10 +346,10 @@
 
   <header>
     <div class="brand">
-      하루 5분 시편 필사 <span>BETA</span>
+      하루 5분 시편 필사 <span>PROTOTYPE</span>
     </div>
     <div class="header-controls">
-      <button class="btn-icon" id="soundBtn">🔊 타자기 소리: 켜짐</button>
+      <button class="btn-icon" id="soundBtn">🔊 타자음: 켬</button>
       <button class="btn-icon" id="themeBtn">🌓 화면 모드</button>
     </div>
   </header>
@@ -321,10 +365,13 @@
 
       <div class="verse-display" id="verseDisplay"></div>
 
-      <input type="text" class="input-hidden" id="hiddenInput" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <!-- Mobile-friendly visible input field -->
+      <div class="input-box-wrapper">
+        <input type="text" id="pilsaInput" class="pilsa-input" placeholder="여기를 터치해서 말씀을 따라 입력해 보세요..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      </div>
 
       <div class="action-row">
-        <div class="stat-text" id="statText">화면을 탭하고 한 글자씩 타자를 쳐보세요</div>
+        <div class="stat-text" id="statText">스마트폰 터치 키보드로 바로 입력됩니다</div>
         <div class="nav-buttons">
           <button class="btn-nav" id="prevBtn">이전</button>
           <button class="btn-nav" id="nextBtn">다음 구절</button>
@@ -337,9 +384,10 @@
     <div class="bgm-banner">
       <div class="bgm-title">
         <span>🎧</span>
-        <span>배경음악: <strong>Lofi Brew - Coffee and Clouds</strong></span>
+        <span>배경음악: <strong>Lofi Ambient</strong></span>
+        <a href="https://www.youtube.com/@lofibrew4u" target="_blank" class="youtube-link">[Lofi Brew 채널]</a>
       </div>
-      <button class="btn-icon" style="padding: 4px 10px;">재생중</button>
+      <button class="btn-bgm" id="bgmToggleBtn">▶ BGM 재생</button>
     </div>
     <a href="#" class="affiliate-link">
       ✍️ 오늘 필사한 구절을 손글씨로도 적어보세요 · 추천 손글씨 교본 & 만년필 둘러보기
@@ -350,8 +398,8 @@
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal-card">
       <div class="modal-title">오늘의 필사 완료 ✨</div>
-      <p style="font-family:'Pretendard',sans-serif; font-size:13px; color:var(--text-muted);">
-        마음을 담아 한 타 한 타 정성껏 완성하셨습니다.
+      <p style="font-family:'Pretendard',sans-serif; font-size:12px; color:var(--text-muted);">
+        마음을 담아 한 자 한 자 정성껏 완성하셨습니다.
       </p>
       <canvas id="cardCanvas" width="800" height="800" class="canvas-preview"></canvas>
       <button class="btn-download" id="downloadBtn">인스타그램 / 카톡 카드 다운로드</button>
@@ -363,49 +411,134 @@
     const verses = [
       { ref: "시편 23편 1절", text: "여호와는 나의 목자시니 내게 부족함이 없으리로다" },
       { ref: "시편 23편 2절", text: "그가 나를 푸른 풀밭에 누이시며 쉴 만한 물 가로 인도하시는도다" },
+      { ref: "시편 23편 3절", text: "내 영혼을 소생시키시고 자기 이름을 위하여 의의 길로 인도하시는도다" },
       { ref: "시편 121편 1절", text: "내가 산을 향하여 눈을 들리라 나의 도움이 어디서 올까" },
       { ref: "시편 121편 2절", text: "나의 도움은 천지를 지으신 여호와에게서로다" }
     ];
 
     let currentIndex = 0;
-    let typedText = "";
     let soundEnabled = true;
+    let bgmPlaying = false;
 
-    // Web Audio API for Typewriter sound
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playTypewriterClick() {
-      if (!soundEnabled) return;
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(600 + Math.random() * 200, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.04);
-      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.05);
+    // Web Audio Context (unlocked on first touch/click)
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
     }
 
+    // Typewriter click sound
+    function playTypewriterClick() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(550 + Math.random() * 150, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.005, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } catch (e) {}
+    }
+
+    // Ambient Lofi Chords Synthesizer (Zero network, 100% offline, soothing sound)
+    let bgmInterval = null;
+    const chords = [
+      [261.63, 329.63, 392.00, 493.88], // Cmaj7 (C4, E4, G4, B4)
+      [220.00, 261.63, 329.63, 392.00], // Am7 (A3, C4, E4, G4)
+      [174.61, 220.00, 261.63, 329.63], // Fmaj7 (F3, A3, C4, E4)
+      [196.00, 246.94, 293.66, 349.23]  // G7 (G3, B3, D4, F4)
+    ];
+    let chordIndex = 0;
+
+    function playLofiChord() {
+      if (!bgmPlaying) return;
+      try {
+        const ctx = getAudioCtx();
+        const chord = chords[chordIndex % chords.length];
+        chordIndex++;
+
+        // Filter for warm lo-fi tone
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(480, ctx.currentTime);
+
+        const masterGain = ctx.createGain();
+        masterGain.gain.setValueAtTime(0.08, ctx.currentTime);
+
+        chord.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+          // Arpeggiated soft attack
+          const startT = ctx.currentTime + (idx * 0.06);
+          gain.gain.setValueAtTime(0.0001, startT);
+          gain.gain.exponentialRampToValueAtTime(0.05, startT + 0.4);
+          gain.gain.exponentialRampToValueAtTime(0.0001, startT + 3.2);
+
+          osc.connect(gain);
+          gain.connect(filter);
+          osc.start(startT);
+          osc.stop(startT + 3.4);
+        });
+
+        filter.connect(masterGain);
+        masterGain.connect(ctx.destination);
+      } catch (e) {}
+    }
+
+    function toggleBGM() {
+      const btn = document.getElementById('bgmToggleBtn');
+      if (!bgmPlaying) {
+        bgmPlaying = true;
+        btn.innerText = '⏸ BGM 끄기';
+        btn.classList.add('playing');
+        playLofiChord();
+        bgmInterval = setInterval(playLofiChord, 3500);
+      } else {
+        bgmPlaying = false;
+        btn.innerText = '▶ BGM 재생';
+        btn.classList.remove('playing');
+        if (bgmInterval) clearInterval(bgmInterval);
+      }
+    }
+
+    document.getElementById('bgmToggleBtn').addEventListener('click', toggleBGM);
+
+    // Elements
     const displayEl = document.getElementById('verseDisplay');
     const titleEl = document.getElementById('verseTitle');
     const progressEl = document.getElementById('progressBar');
-    const inputEl = document.getElementById('hiddenInput');
-    const cardArea = document.getElementById('cardArea');
+    const inputEl = document.getElementById('pilsaInput');
     const modalEl = document.getElementById('modalOverlay');
 
     function render() {
       const current = verses[currentIndex];
       titleEl.innerText = current.ref;
       const target = current.text;
+      const typed = inputEl.value;
 
       let html = '';
       for (let i = 0; i < target.length; i++) {
-        if (i < typedText.length) {
-          html += `<span class="char-typed">${typedText[i]}</span>`;
-        } else if (i === typedText.length) {
+        if (i < typed.length) {
+          if (typed[i] === target[i]) {
+            html += `<span class="char-typed">${typed[i]}</span>`;
+          } else {
+            html += `<span class="char-wrong">${typed[i]}</span>`;
+          }
+        } else if (i === typed.length) {
           html += `<span class="cursor"></span><span class="char-target">${target[i]}</span>`;
         } else {
           html += `<span class="char-target">${target[i]}</span>`;
@@ -413,42 +546,25 @@
       }
       displayEl.innerHTML = html;
 
-      const pct = Math.min(100, Math.round((typedText.length / target.length) * 100));
+      const pct = Math.min(100, Math.round((typed.length / target.length) * 100));
       progressEl.style.width = pct + '%';
     }
 
-    cardArea.addEventListener('click', () => {
-      inputEl.focus();
-    });
+    // Input Event handling (Full Korean IME support on all mobile keyboards)
+    inputEl.addEventListener('input', (e) => {
+      playTypewriterClick();
+      render();
 
-    window.addEventListener('keydown', (e) => {
-      if (modalEl.classList.contains('active')) return;
-      const target = verses[currentIndex].text;
-
-      if (e.key === 'Backspace') {
-        if (typedText.length > 0) {
-          typedText = typedText.slice(0, -1);
-          render();
-        }
-        return;
-      }
-
-      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        if (typedText.length < target.length) {
-          typedText += e.key;
-          playTypewriterClick();
-          render();
-
-          if (typedText === target) {
-            setTimeout(completeVerse, 300);
-          }
-        }
+      const current = verses[currentIndex];
+      if (inputEl.value.trim() === current.text.trim()) {
+        setTimeout(completeVerse, 400);
       }
     });
 
     function completeVerse() {
       generateCardImage();
       modalEl.classList.add('active');
+      inputEl.blur();
     }
 
     function generateCardImage() {
@@ -457,83 +573,86 @@
       const verse = verses[currentIndex];
 
       // Draw paper background
-      ctx.fillStyle = '#fcfaf5';
+      ctx.fillStyle = '#fbf9f4';
       ctx.fillRect(0, 0, 800, 800);
 
       // Subtle border
       ctx.strokeStyle = '#ede7df';
-      ctx.lineWidth = 16;
-      ctx.strokeRect(30, 30, 740, 740);
+      ctx.lineWidth = 14;
+      ctx.strokeRect(28, 28, 744, 744);
 
       // Header
       ctx.fillStyle = '#8b5e34';
       ctx.font = '24px serif';
       ctx.textAlign = 'center';
-      ctx.fillText('하루 5분 시편 필사', 400, 160);
+      ctx.fillText('하루 5분 시편 필사', 400, 150);
 
       // Verse Reference
       ctx.fillStyle = '#8c827a';
       ctx.font = '20px sans-serif';
-      ctx.fillText(verse.ref, 400, 210);
+      ctx.fillText(verse.ref, 400, 200);
 
       // Divider line
       ctx.strokeStyle = '#d4cdc5';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(320, 240);
-      ctx.lineTo(480, 240);
+      ctx.moveTo(330, 230);
+      ctx.lineTo(470, 230);
       ctx.stroke();
 
-      // Main Verse Text (wrapped)
+      // Main Verse Text
       ctx.fillStyle = '#22201d';
-      ctx.font = 'bold 36px serif';
+      ctx.font = 'bold 32px serif';
       const words = verse.text.split(' ');
-      let line1 = words.slice(0, 3).join(' ');
-      let line2 = words.slice(3).join(' ');
-      ctx.fillText(line1, 400, 380);
-      if (line2) ctx.fillText(line2, 400, 440);
+      let line1 = words.slice(0, Math.ceil(words.length / 2)).join(' ');
+      let line2 = words.slice(Math.ceil(words.length / 2)).join(' ');
+      ctx.fillText(line1, 400, 360);
+      if (line2) ctx.fillText(line2, 400, 420);
 
       // Seal Stamp
       ctx.strokeStyle = '#b83b26';
       ctx.lineWidth = 3;
-      ctx.strokeRect(360, 530, 80, 80);
+      ctx.strokeRect(360, 510, 80, 80);
       ctx.fillStyle = '#b83b26';
       ctx.font = 'bold 20px serif';
-      ctx.fillText('필사', 400, 565);
-      ctx.fillText('완료', 400, 595);
+      ctx.fillText('필사', 400, 545);
+      ctx.fillText('완료', 400, 575);
 
       // Date & Signature
       const today = new Date().toISOString().split('T')[0].replace(/-/g, '.');
       ctx.fillStyle = '#9e9488';
       ctx.font = '18px sans-serif';
-      ctx.fillText(`${today} · Lofi Brew`, 400, 680);
+      ctx.fillText(`${today} · Lofi Brew`, 400, 660);
     }
 
     document.getElementById('downloadBtn').addEventListener('click', () => {
       const canvas = document.getElementById('cardCanvas');
       const link = document.createElement('a');
       link.download = `시편필사_${verses[currentIndex].ref}.png`;
-      link.href = canvas.toDataURL();
+      link.href = canvas.toDataURL('image/png');
       link.click();
     });
 
     document.getElementById('closeModalBtn').addEventListener('click', () => {
       modalEl.classList.remove('active');
       currentIndex = (currentIndex + 1) % verses.length;
-      typedText = "";
+      inputEl.value = "";
       render();
+      inputEl.focus();
     });
 
     document.getElementById('nextBtn').addEventListener('click', () => {
       currentIndex = (currentIndex + 1) % verses.length;
-      typedText = "";
+      inputEl.value = "";
       render();
+      inputEl.focus();
     });
 
     document.getElementById('prevBtn').addEventListener('click', () => {
       currentIndex = (currentIndex - 1 + verses.length) % verses.length;
-      typedText = "";
+      inputEl.value = "";
       render();
+      inputEl.focus();
     });
 
     document.getElementById('themeBtn').addEventListener('click', () => {
@@ -542,7 +661,12 @@
 
     document.getElementById('soundBtn').addEventListener('click', () => {
       soundEnabled = !soundEnabled;
-      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊 타자기 소리: 켜짐' : '🔇 소리: 꺼짐';
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊 타자음: 켬' : '🔇 소리: 끔';
+    });
+
+    // Touch card to focus input
+    document.getElementById('cardArea').addEventListener('click', () => {
+      inputEl.focus();
     });
 
     render();
