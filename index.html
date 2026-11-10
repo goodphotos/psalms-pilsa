@@ -73,7 +73,20 @@
     }
     .header-controls {
       display: flex;
-      gap: 8px;
+      gap: 6px;
+      align-items: center;
+    }
+    .chapter-select {
+      background: var(--card-bg);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 5px 8px;
+      border-radius: 12px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
     }
     .btn-icon {
       background: var(--card-bg);
@@ -370,8 +383,13 @@
       하루 5분 시편 필사 <span>내 마음의 에덴동산</span>
     </div>
     <div class="header-controls">
+      <select id="chapterSelect" class="chapter-select">
+        <option value="psalms23">시편 23편 (총 6절)</option>
+        <option value="psalms121">시편 121편 (총 8절)</option>
+        <option value="psalms1">시편 1편 (총 6절)</option>
+      </select>
       <button class="btn-icon" id="soundBtn">🔊 타자음: 켬</button>
-      <button class="btn-icon" id="themeBtn">🌓 화면 모드</button>
+      <button class="btn-icon" id="themeBtn">🌓 모드</button>
     </div>
   </header>
 
@@ -395,7 +413,7 @@
       </div>
 
       <div class="action-row">
-        <div class="stat-text" id="statText">시편 23편 1절부터 6절까지 완주해 보세요</div>
+        <div class="stat-text" id="statText">말씀을 따라 한 자씩 정성껏 입력해 보세요</div>
         <div class="nav-buttons">
           <button class="btn-nav" id="prevBtn">이전</button>
           <button class="btn-nav" id="nextBtn">다음 절</button>
@@ -434,20 +452,54 @@
   </div>
 
   <script>
-    // Psalm 23 Complete (Verses 1 to 6)
-    const verses = [
-      { ref: "시편 23편 1절", text: "여호와는 나의 목자시니 내게 부족함이 없으리로다" },
-      { ref: "시편 23편 2절", text: "그가 나를 푸른 풀밭에 누이시며 쉴 만한 물 가로 인도하시는도다" },
-      { ref: "시편 23편 3절", text: "내 영혼을 소생시키시고 자기 이름을 위하여 의의 길로 인도하시는도다" },
-      { ref: "시편 23편 4절", text: "내가 사망의 음침한 골짜기로 다닐지라도 해를 두려워하지 않을 것은 주께서 나와 함께 하심이라 주의 지팡이와 막대기가 나를 안위하시나이다" },
-      { ref: "시편 23편 5절", text: "주께서 내 원수의 목전에서 내게 상을 차려 주시고 기름을 내 머리에 부으셨으니 내 잔이 넘치나이다" },
-      { ref: "시편 23편 6절", text: "내 평생에 선하심과 인자하심이 반드시 나를 따르리니 내가 여호와의 집에 영원히 살리로다" }
-    ];
+    // Chapter Library
+    const chapters = {
+      psalms23: {
+        title: "시편 23편",
+        verses: [
+          { ref: "시편 23편 1절", text: "여호와는 나의 목자시니 내게 부족함이 없으리로다" },
+          { ref: "시편 23편 2절", text: "그가 나를 푸른 풀밭에 누이시며 쉴 만한 물 가로 인도하시는도다" },
+          { ref: "시편 23편 3절", text: "내 영혼을 소생시키시고 자기 이름을 위하여 의의 길로 인도하시는도다" },
+          { ref: "시편 23편 4절", text: "내가 사망의 음침한 골짜기로 다닐지라도 해를 두려워하지 않을 것은 주께서 나와 함께 하심이라 주의 지팡이와 막대기가 나를 안위하시나이다" },
+          { ref: "시편 23편 5절", text: "주께서 내 원수의 목전에서 내게 상을 차려 주시고 기름을 내 머리에 부으셨으니 내 잔이 넘치나이다" },
+          { ref: "시편 23편 6절", text: "내 평생에 선하심과 인자하심이 반드시 나를 따르리니 내가 여호와의 집에 영원히 살리로다" }
+        ],
+        nextChapterKey: "psalms121"
+      },
+      psalms121: {
+        title: "시편 121편",
+        verses: [
+          { ref: "시편 121편 1절", text: "내가 산을 향하여 눈을 들리라 나의 도움이 어디서 올까" },
+          { ref: "시편 121편 2절", text: "나의 도움은 천지를 지으신 여호와에게서로다" },
+          { ref: "시편 121편 3절", text: "여호와께서 너를 실족하지 아니하게 하시며 너를 지키시는 이가 졸지 아니하시리로다" },
+          { ref: "시편 121편 4절", text: "이스라엘을 지키시는 이는 졸지도 아니하시고 주무시지도 아니하시리로다" },
+          { ref: "시편 121편 5절", text: "여호와는 너를 지키시는 이시라 여호와께서 네 오른쪽에서 네 그늘이 되시나니" },
+          { ref: "시편 121편 6절", text: "낮의 해가 너를 상하게 하지 아니하며 밤의 달도 너를 해치지 아니하리로다" },
+          { ref: "시편 121편 7절", text: "여호와께서 너를 지켜 모든 환난을 면하게 하시며 또 네 영혼을 지키시리로다" },
+          { ref: "시편 121편 8절", text: "여호와께서 너의 출입을 지금부터 영원까지 지키시리로다" }
+        ],
+        nextChapterKey: "psalms1"
+      },
+      psalms1: {
+        title: "시편 1편",
+        verses: [
+          { ref: "시편 1편 1절", text: "복 있는 사람은 악인들의 꾀를 따르지 아니하며 죄인들의 길에 서지 아니하며 오만한 자들의 자리에 앉지 아니하고" },
+          { ref: "시편 1편 2절", text: "오직 여호와의 율법을 즐거워하여 그의 율법을 주야로 묵상하는도다" },
+          { ref: "시편 1편 3절", text: "그는 시냇가에 심은 나무가 철을 따라 열매를 맺으며 그 잎사귀가 마르지 아니함 같으니 그가 하는 모든 일이 다 형통하리로다" },
+          { ref: "시편 1편 4절", text: "악인들은 그렇지 아니함이여 오직 바람에 나는 겨와 같도다" },
+          { ref: "시편 1편 5절", text: "그러므로 악인들은 심판을 견디지 못하며 죄인들이 의인들의 모임에 들지 못하리로다" },
+          { ref: "시편 1편 6절", text: "무릇 의인들의 길은 여호와께서 인정하시나 악인들의 길은 망하리로다" }
+        ],
+        nextChapterKey: "psalms23"
+      }
+    };
 
+    let currentChapterKey = "psalms23";
+    let currentVerses = chapters[currentChapterKey].verses;
     let currentIndex = 0;
     let soundEnabled = true;
 
-    // Web Audio Context for crisp mechanical typewriter sound
+    // Web Audio for mechanical typewriter sound
     let audioCtx = null;
     function getAudioCtx() {
       if (!audioCtx) {
@@ -504,11 +556,21 @@
     const progressEl = document.getElementById('progressBar');
     const inputEl = document.getElementById('pilsaInput');
     const modalEl = document.getElementById('modalOverlay');
+    const chapterSelect = document.getElementById('chapterSelect');
+
+    chapterSelect.addEventListener('change', (e) => {
+      currentChapterKey = e.target.value;
+      currentVerses = chapters[currentChapterKey].verses;
+      currentIndex = 0;
+      inputEl.value = "";
+      render();
+      inputEl.focus();
+    });
 
     function render() {
-      const current = verses[currentIndex];
+      const current = currentVerses[currentIndex];
       titleEl.innerText = current.ref;
-      stepBadge.innerText = `${currentIndex + 1} / ${verses.length}절`;
+      stepBadge.innerText = `${currentIndex + 1} / ${currentVerses.length}절`;
       const target = current.text;
       const typed = inputEl.value;
 
@@ -532,33 +594,54 @@
       progressEl.style.width = pct + '%';
     }
 
-    // Input Event handling
     inputEl.addEventListener('input', (e) => {
       getAudioCtx();
       playTypewriterClick();
       render();
 
-      const current = verses[currentIndex];
+      const current = currentVerses[currentIndex];
       if (inputEl.value.trim() === current.text.trim()) {
         setTimeout(completeVerse, 400);
       }
     });
 
     function completeVerse() {
-      const isFinalVerse = (currentIndex === verses.length - 1);
+      const isFinalVerse = (currentIndex === currentVerses.length - 1);
       const modalTitle = document.getElementById('modalTitle');
       const modalSub = document.getElementById('modalSubtitle');
       const closeBtn = document.getElementById('closeModalBtn');
 
       if (isFinalVerse) {
-        modalTitle.innerText = "🎉 시편 23편 전편 완주!";
-        modalSub.innerText = "시편 23편 1~6절을 모두 완주하셨습니다. 완주 인증 카드를 저장해 보세요.";
-        closeBtn.innerText = "처음부터 다시 묵상하기";
+        modalTitle.innerText = `🎉 ${chapters[currentChapterKey].title} 전편 완주!`;
+        modalSub.innerText = `${chapters[currentChapterKey].title} 전편을 모두 완주하셨습니다. 완주 인증 카드를 저장해 보세요.`;
+        
+        const nextKey = chapters[currentChapterKey].nextChapterKey;
+        const nextTitle = chapters[nextKey].title;
+        closeBtn.innerText = `다음 장 필사하기: ${nextTitle} (1절부터) →`;
+        closeBtn.onclick = () => {
+          modalEl.classList.remove('active');
+          chapterSelect.value = nextKey;
+          currentChapterKey = nextKey;
+          currentVerses = chapters[currentChapterKey].verses;
+          currentIndex = 0;
+          inputEl.value = "";
+          render();
+          inputEl.focus();
+        };
+
         generateFullChapterCard();
       } else {
-        modalTitle.innerText = `${verses[currentIndex].ref} 필사 완료 ✨`;
+        modalTitle.innerText = `${currentVerses[currentIndex].ref} 필사 완료 ✨`;
         modalSub.innerText = "마음을 담아 한 자 한 자 정성껏 완성하셨습니다.";
-        closeBtn.innerText = `다음 절 필사하기 (${currentIndex + 2}/${verses.length}절) →`;
+        closeBtn.innerText = `다음 절 필사하기 (${currentIndex + 2}/${currentVerses.length}절) →`;
+        closeBtn.onclick = () => {
+          modalEl.classList.remove('active');
+          currentIndex = (currentIndex + 1) % currentVerses.length;
+          inputEl.value = "";
+          render();
+          inputEl.focus();
+        };
+
         generateSingleVerseCard();
       }
 
@@ -566,11 +649,49 @@
       inputEl.blur();
     }
 
-    // Single Verse Card Generator
+    // Dynamic Word-Wrapping Text Drawer (Prevents any text overflow)
+    function drawAutoWrappedText(ctx, text, x, centerY, maxWidth) {
+      let fontSize = 26;
+      let lineHeight = 42;
+      if (text.length > 55) {
+        fontSize = 20;
+        lineHeight = 34;
+      } else if (text.length > 35) {
+        fontSize = 23;
+        lineHeight = 38;
+      }
+      ctx.font = `bold ${fontSize}px serif`;
+
+      const words = text.split(' ');
+      const lines = [];
+      let currentLine = '';
+
+      for (let i = 0; i < words.length; i++) {
+        const testLine = currentLine ? currentLine + ' ' + words[i] : words[i];
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = words[i];
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+
+      const totalHeight = lines.length * lineHeight;
+      let startY = centerY - (totalHeight / 2) + (lineHeight / 2);
+
+      lines.forEach(line => {
+        ctx.fillText(line, x, startY);
+        startY += lineHeight;
+      });
+    }
+
+    // Single Verse Card Generator with perfect text-wrapping
     function generateSingleVerseCard() {
       const canvas = document.getElementById('cardCanvas');
       const ctx = canvas.getContext('2d');
-      const verse = verses[currentIndex];
+      const verse = currentVerses[currentIndex];
 
       ctx.fillStyle = '#fbf9f4';
       ctx.fillRect(0, 0, 800, 800);
@@ -582,45 +703,43 @@
       ctx.fillStyle = '#8b5e34';
       ctx.font = '24px serif';
       ctx.textAlign = 'center';
-      ctx.fillText('하루 5분 시편 필사', 400, 150);
+      ctx.fillText('하루 5분 시편 필사', 400, 145);
 
       ctx.fillStyle = '#8c827a';
       ctx.font = '20px sans-serif';
-      ctx.fillText(verse.ref, 400, 200);
+      ctx.fillText(verse.ref, 400, 192);
 
       ctx.strokeStyle = '#d4cdc5';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(330, 230);
-      ctx.lineTo(470, 230);
+      ctx.moveTo(330, 220);
+      ctx.lineTo(470, 220);
       ctx.stroke();
 
+      // Wrapped main verse text (Max width 600px - never overflows!)
       ctx.fillStyle = '#22201d';
-      ctx.font = 'bold 30px serif';
-      const words = verse.text.split(' ');
-      let line1 = words.slice(0, Math.ceil(words.length / 2)).join(' ');
-      let line2 = words.slice(Math.ceil(words.length / 2)).join(' ');
-      ctx.fillText(line1, 400, 360);
-      if (line2) ctx.fillText(line2, 400, 420);
+      drawAutoWrappedText(ctx, verse.text, 400, 360, 600);
 
+      // Seal Stamp
       ctx.strokeStyle = '#b83b26';
       ctx.lineWidth = 3;
-      ctx.strokeRect(360, 510, 80, 80);
+      ctx.strokeRect(360, 500, 80, 80);
       ctx.fillStyle = '#b83b26';
       ctx.font = 'bold 20px serif';
-      ctx.fillText('필사', 400, 545);
-      ctx.fillText('완료', 400, 575);
+      ctx.fillText('필사', 400, 535);
+      ctx.fillText('완료', 400, 565);
 
       const today = new Date().toISOString().split('T')[0].replace(/-/g, '.');
       ctx.fillStyle = '#8b5e34';
       ctx.font = '20px serif';
-      ctx.fillText(`${today} · 내 마음의 에덴동산`, 400, 660);
+      ctx.fillText(`${today} · 내 마음의 에덴동산`, 400, 650);
     }
 
-    // Grand Full-Chapter Completion Card Generator (Psalm 23: 1-6)
+    // Grand Full-Chapter Completion Card Generator
     function generateFullChapterCard() {
       const canvas = document.getElementById('cardCanvas');
       const ctx = canvas.getContext('2d');
+      const chap = chapters[currentChapterKey];
 
       ctx.fillStyle = '#fbf9f4';
       ctx.fillRect(0, 0, 800, 800);
@@ -635,43 +754,41 @@
       ctx.fillStyle = '#8b5e34';
       ctx.font = 'bold 28px serif';
       ctx.textAlign = 'center';
-      ctx.fillText('시편 23편 전편 완주 인증서', 400, 100);
+      ctx.fillText(`${chap.title} 전편 완주 인증서`, 400, 95);
 
       ctx.fillStyle = '#8c827a';
-      ctx.font = '16px sans-serif';
-      ctx.fillText('여호와는 나의 목자시니 내게 부족함이 없으리로다', 400, 135);
+      ctx.font = '15px sans-serif';
+      ctx.fillText('마음을 다하여 기록한 은혜의 말씀', 400, 128);
 
-      // Print all 6 verses neatly
       ctx.fillStyle = '#22201d';
-      ctx.font = '16px serif';
       ctx.textAlign = 'left';
-      let y = 180;
-      verses.forEach((v, i) => {
+      let y = 170;
+      chap.verses.forEach((v, i) => {
         ctx.fillStyle = '#8b5e34';
-        ctx.font = 'bold 15px sans-serif';
-        ctx.fillText(`[${i+1}절]`, 70, y);
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillText(`[${i+1}절]`, 65, y);
         
         ctx.fillStyle = '#22201d';
-        ctx.font = '15px serif';
+        ctx.font = '14px serif';
         let txt = v.text;
-        if (txt.length > 36) {
-          ctx.fillText(txt.slice(0, 36), 120, y);
-          y += 24;
-          ctx.fillText(txt.slice(36), 120, y);
+        if (txt.length > 38) {
+          ctx.fillText(txt.slice(0, 38), 115, y);
+          y += 22;
+          ctx.fillText(txt.slice(38), 115, y);
         } else {
-          ctx.fillText(txt, 120, y);
+          ctx.fillText(txt, 115, y);
         }
-        y += 36;
+        y += 32;
       });
 
       // Bottom Seal & Signature
       ctx.textAlign = 'center';
       ctx.strokeStyle = '#b83b26';
       ctx.lineWidth = 3;
-      ctx.strokeRect(360, 620, 80, 70);
+      ctx.strokeRect(360, 625, 80, 65);
       ctx.fillStyle = '#b83b26';
-      ctx.font = 'bold 18px serif';
-      ctx.fillText('전편', 400, 648);
+      ctx.font = 'bold 17px serif';
+      ctx.fillText('전편', 400, 650);
       ctx.fillText('완주', 400, 672);
 
       const today = new Date().toISOString().split('T')[0].replace(/-/g, '.');
@@ -683,28 +800,20 @@
     document.getElementById('downloadBtn').addEventListener('click', () => {
       const canvas = document.getElementById('cardCanvas');
       const link = document.createElement('a');
-      link.download = `시편23편_필사완주_내마음의에덴동산.png`;
+      link.download = `${chapters[currentChapterKey].title}_필사완주_내마음의에덴동산.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     });
 
-    document.getElementById('closeModalBtn').addEventListener('click', () => {
-      modalEl.classList.remove('active');
-      currentIndex = (currentIndex + 1) % verses.length;
-      inputEl.value = "";
-      render();
-      inputEl.focus();
-    });
-
     document.getElementById('nextBtn').addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % verses.length;
+      currentIndex = (currentIndex + 1) % currentVerses.length;
       inputEl.value = "";
       render();
       inputEl.focus();
     });
 
     document.getElementById('prevBtn').addEventListener('click', () => {
-      currentIndex = (currentIndex - 1 + verses.length) % verses.length;
+      currentIndex = (currentIndex - 1 + currentVerses.length) % currentVerses.length;
       inputEl.value = "";
       render();
       inputEl.focus();
